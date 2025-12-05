@@ -27,7 +27,7 @@ app.get("/",  (req: Request, res: Response) => {
 
 // ===========user ===========
 
-app.use("/api/v1/auth/" , userRoutes)
+app.use("/api/v1/" , userRoutes)
 
 
 

@@ -1,74 +1,60 @@
 import { pool } from "../../config/db";
-import bcrypt from "bcryptjs";
 
-
-const createUser = async (payload: Record<string, unknown>) => {
-  const { name, email, password, phone, role } = payload;
-
-  if (!name || !email || !password || !role || !phone) {
-    throw new Error("All fields are required");
-  }
-
-  const emailLower = (email as string).toLowerCase();
-
-  if ((password as string).length < 6) {
-    throw new Error("Password must be at least 6 characters");
-  }
-
-  const validRoles = ["admin", "customer"];
-
-  if (!validRoles.includes(role as string)) {
-    throw new Error("Invalid role");
-  }
-
-  const hashedPass = await bcrypt.hash(password as string, 10);
-
+const getAllUsers = async () => {
   const result = await pool.query(
-    `INSERT INTO users(name,email,password,phone,role)
-     VALUES($1,$2,$3,$4,$5) RETURNING id, name, email, phone, role`,
-    [name, emailLower, hashedPass, phone, role]
+    `SELECT id, name, email, phone, role FROM users ORDER BY id ASC`
   );
 
-  return result.rows[0]; 
+  return result.rows;
 };
 
+const updateUser = async (id: number, payload: any) => {
+  const check = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
 
+  if (check.rowCount === 0) throw new Error("User not found");
 
+  const old = check.rows[0];
 
+  const updated = {
+    name: payload.name ?? old.name,
+    email: payload.email?.toLowerCase() ?? old.email,
+    phone: payload.phone ?? old.phone,
+    role: payload.role ?? old.role,
+  };
 
+  const result = await pool.query(
+    `
+    UPDATE users SET 
+      name = $1,
+      email = $2,
+      phone = $3,
+      role = $4
+    WHERE id = $5
+    RETURNING id, name, email, phone, role;
+    `,
+    [updated.name, updated.email, updated.phone, updated.role, id]
+  );
 
+  return result.rows[0];
+};
 
+const deleteUser = async (id: number) => {
+  const bookingCheck = await pool.query(
+    `SELECT * FROM bookings WHERE customer_id = $1 AND status = 'active'`,
+    [id]
+  );
 
+  if (bookingCheck.rowCount! > 0) {
+    throw new Error("User has active bookings, cannot be deleted");
+  }
 
+  const result = await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
 
+  if (result.rowCount === 0) throw new Error("User not found");
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const userServices ={
-    createUser,
-    
-}
+export const userServices = {
+  getAllUsers,
+  updateUser,
+  deleteUser,
+};

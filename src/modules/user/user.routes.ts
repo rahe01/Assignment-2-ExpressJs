@@ -1,12 +1,21 @@
 import  express from "express";
 import { userControllers } from "./user.controller";
+import auth from "../../middleware/auth";
 const router = express.Router();
 
 
 
-router.post("/signup" ,userControllers.createUser);
 
 
+
+
+router.get("/users", auth("admin"), userControllers.getAllUsers);
+
+
+router.put("/users/:userId", auth("admin", "customer"), userControllers.updateUser);
+
+
+router.delete("/users/:userId", auth("admin"), userControllers.deleteUser);
 
 
 
