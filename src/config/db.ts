@@ -14,7 +14,7 @@ const initDB = async () => {
     
   //  user tableeeeeeeeeee
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS users(
+      CREATE TABLE IF NOT EXISTS Users(
         id SERIAL PRIMARY KEY,
         name VARCHAR(200) NOT NULL,
         email VARCHAR(200) UNIQUE NOT NULL CHECK (email = LOWER(email)),
@@ -27,7 +27,7 @@ const initDB = async () => {
 
   //  vehicle tablesssssssssss
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS vehicles(
+      CREATE TABLE IF NOT EXISTS Vehicles(
         id SERIAL PRIMARY KEY,
         vehicle_name VARCHAR(200) NOT NULL,
         type VARCHAR(50) NOT NULL CHECK (type IN ('car', 'bike', 'van', 'SUV')),
@@ -42,7 +42,7 @@ const initDB = async () => {
 
     // booking tableeeeeeeeeeeeeeeeeeeee
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS bookings(
+      CREATE TABLE IF NOT EXISTS Bookings(
         id SERIAL PRIMARY KEY,
         customer_id INT REFERENCES users(id) ON DELETE CASCADE,
         vehicle_id INT REFERENCES vehicles(id) ON DELETE CASCADE,
