@@ -3,6 +3,7 @@ import initDB from "./config/db";
 import { userRoutes } from "./modules/user/user.routes";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { vehicleRoutes } from "./modules/vehicle/vehicle.routes";
+import { bookingRoute } from "./modules/booking/booking.routes";
 
 
 
@@ -40,6 +41,18 @@ app.use("/api/v1/auth/", authRoutes);
 
 
 app.use("/api/v1/" , vehicleRoutes);
+
+
+// ===============booking=====================
+
+
+app.use("/api/v1/bookings/" , bookingRoute )
+
+
+
+
+
+
 
 
 

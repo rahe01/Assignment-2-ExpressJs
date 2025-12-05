@@ -2,14 +2,14 @@ import { pool } from "../../config/db";
 
 const getAllUsers = async () => {
   const result = await pool.query(
-    `SELECT id, name, email, phone, role FROM users ORDER BY id ASC`
+    `SELECT id, name, email, phone, role FROM Users ORDER BY id ASC`
   );
 
   return result.rows;
 };
 
 const updateUser = async (id: number, payload: any) => {
-  const check = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+  const check = await pool.query(`SELECT * FROM Users WHERE id = $1`, [id]);
 
   if (check.rowCount === 0) throw new Error("User not found");
 
@@ -24,7 +24,7 @@ const updateUser = async (id: number, payload: any) => {
 
   const result = await pool.query(
     `
-    UPDATE users SET 
+    UPDATE Users SET 
       name = $1,
       email = $2,
       phone = $3,
@@ -40,7 +40,7 @@ const updateUser = async (id: number, payload: any) => {
 
 const deleteUser = async (id: number) => {
   const bookingCheck = await pool.query(
-    `SELECT * FROM bookings WHERE customer_id = $1 AND status = 'active'`,
+    `SELECT * FROM Bookings WHERE customer_id = $1 AND status = 'active'`,
     [id]
   );
 
@@ -48,7 +48,7 @@ const deleteUser = async (id: number) => {
     throw new Error("User has active bookings, cannot be deleted");
   }
 
-  const result = await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
+  const result = await pool.query(`DELETE FROM Users WHERE id = $1`, [id]);
 
   if (result.rowCount === 0) throw new Error("User not found");
 };

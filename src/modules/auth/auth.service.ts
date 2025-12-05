@@ -30,7 +30,7 @@ const createUser = async (payload: Record<string, unknown>) => {
   const hashedPass = await bcrypt.hash(password as string, 10);
 
   const result = await pool.query(
-    `INSERT INTO users(name,email,password,phone,role)
+    `INSERT INTO Users(name,email,password,phone,role)
      VALUES($1,$2,$3,$4,$5) RETURNING id, name, email, phone, role`,
     [name, emailLower, hashedPass, phone, role]
   );
@@ -50,7 +50,7 @@ const loginUser = async (email: string, password: string) => {
 
   const emailLower = email.toLowerCase();
 
-  const result = await pool.query(`SELECT * FROM users WHERE email = $1`, [
+  const result = await pool.query(`SELECT * FROM Users WHERE email = $1`, [
     emailLower,
   ]);
 
