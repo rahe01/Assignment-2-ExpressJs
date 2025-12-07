@@ -15,10 +15,15 @@ const auth = (...roles: string[]) => {
       }
 
       const token = authHeader.split(" ")[1];
+      interface JwtUserPayload extends JwtPayload {
+        id: number;
+        role: string;
+      }
+
       const decoded = jwt.verify(
         token as string,
         config.jwtSecret as string
-      ) as JwtPayload;
+      ) as JwtUserPayload;
 
       req.user = decoded;
 

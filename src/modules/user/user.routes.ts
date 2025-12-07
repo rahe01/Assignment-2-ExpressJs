@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/users", auth("admin"), userControllers.getAllUsers);
 
 
-router.put("/users/:userId", auth("admin", "customer"), userControllers.updateUser);
+router.put("/users/:userId", auth("admin", "customer"), userControllers.updateUsers);
 
 
 router.delete("/users/:userId", auth("admin"), userControllers.deleteUser);

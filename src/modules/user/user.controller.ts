@@ -24,31 +24,33 @@ const getAllUsers = async (req: Request, res: Response) => {
 
 
 
-const updateUser = async (req: Request, res: Response) => {
+const updateUsers = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.userId);
-    const loggedInUser = req.user;
+    const userId = Number(req.params.userId);
+    const payload = req.body;
 
+    const requesterId = Number(req.user.id); 
+    const requesterRole = req.user.role;      
 
-    if (loggedInUser?.role === "customer" && loggedInUser?.id !== id) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not allowed to update other users",
-      });
-    }
+    const updated = await userServices.updateUser(
+      userId,
+      payload,
+      requesterRole,
+      requesterId
+    );
 
-    const user = await userServices.updateUser(id, req.body);
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "User updated successfully",
-      data: user,
+      data: updated,
     });
-  } catch (err: any) {
-    res.status(400).json({ success: false, message: err.message });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
-
 
 
 
@@ -57,6 +59,7 @@ const deleteUser = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.userId);
 
+    
     await userServices.deleteUser(id);
 
     res.status(200).json({
@@ -75,6 +78,6 @@ const deleteUser = async (req: Request, res: Response) => {
 export const userControllers = {
  
   getAllUsers,
-  updateUser,
+  updateUsers,
   deleteUser,
 };
